@@ -3,22 +3,15 @@ language: cpp
 compiler:
   - gcc
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-5
-      - g++-5
-
 install:
   - pip install --user conan
+  - conan
 
 script:
   - mkdir build && cd build
 
-  - conan install .. -s compiler=gcc -s compiler.libcxx=libstdc++11 -s compiler.version=5.4 -s build_type=Debug
-  - CC=gcc-5 CXX=g++-5 cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+  - conan install .. -s build_type=Debug
+  - CC=gcc CXX=g++ cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
   - cmake --build . --target conan_test
 
   - ./bin/conan_test.exe
