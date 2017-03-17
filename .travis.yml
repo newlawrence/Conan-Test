@@ -4,13 +4,13 @@ compiler:
   - gcc
 
 install:
-  - sudo pip install conan
+  - pip install --user conan
 
 script:
   - mkdir build && cd build
 
   - conan install .. 
-  - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+  - CC=gcc CXX=g++ cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
   - cmake --build . --target conan_test
 
   - ./bin/conan_test.exe
