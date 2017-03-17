@@ -6,12 +6,14 @@ compiler:
 install:
   - pip install --user conan
   - conan
+  - cmake --version
+  - conan --version
 
 script:
   - mkdir build && cd build
 
-  - conan install .. -s build_type=Debug
-  - CC=gcc CXX=g++ cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
-  - cmake --build . --target conan_test
+  - conan install ..
+  - cmake ..
+  - cmake --build .
 
   - ./bin/conan_test.exe
