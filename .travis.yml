@@ -3,17 +3,45 @@ language: cpp
 compiler:
   - gcc
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-5
+      - g++-5
+
+env:
+  global:
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    - CMAKE_FILE=cmake-3.5.2-Linux-x86_64.tar.gz
+    - CMAKE_URL=http://www.cmake.org/files/v3.5/${CMAKE_FILE}  
+
+before_install:
+  - mkdir -p ${DEPS_DIR}
+
 install:
+  - wget ${CMAKE_URL} --quiet --no-check-certificate
+  - mkdir -p cmake
+  - tar -xzf ${CMAKE_FILE} -C cmake --strip-components 1
+  - mv cmake ${DEPS_DIR}
+  - export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+  - cmake --version
   - pip install --user conan
   - conan
-  - cmake --version
   - conan --version
 
 script:
   - mkdir build && cd build
 
-  - conan install ..
-  - cmake ..
-  - cmake --build .
+  >- conan install ..
+         -s compiler=gcc
+         -s compiler.libcxx=libstdc++11
+         -s compiler.version=5.4
+         -s build_type=Debug
+  >- CC=gcc-5 CXX=g++-5 cmake ..
+         -G "Unix Makefiles"
+         -DCMAKE_BUILD_TYPE=Debug
+  >- cmake --build . --target conan_test
 
   - ./bin/conan_test.exe
